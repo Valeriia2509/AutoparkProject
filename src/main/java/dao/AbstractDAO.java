@@ -1,6 +1,6 @@
 package dao;
 
-import Connection.ConnectionPool;
+import connection.ConnectionPool;
 
 public class AbstractDAO {
     protected ConnectionPool connectionPool = null;

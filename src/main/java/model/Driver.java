@@ -1,4 +1,4 @@
-package Model;
+package model;
 
 public class Driver {
     private int driverID;
@@ -8,6 +8,9 @@ public class Driver {
     private int salary;
     private int routeNumber;
     private String busNumber;
+
+    public Driver() {
+    }
 
     public Driver(int driverID, String name, String surname, String phoneNumber, int salary) {
         super();
@@ -57,6 +60,14 @@ public class Driver {
         return salary;
     }
 
+    public void setDriverID(int driverID) {
+        this.driverID = driverID;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
     public void setSurname(String surname) {
         this.surname = surname;
     }
@@ -65,15 +76,15 @@ public class Driver {
         this.phoneNumber = phoneNumber;
     }
 
-    public void setRoute(int routeNumber) {
-        this.routeNumber = routeNumber;
-    }
-
     public void setBusNumber(String busNumber) {
         this.busNumber = busNumber;
     }
 
     public void setSalary(int salary) {
         this.salary = salary;
+    }
+
+    public void setRouteNumber(int routeNumber) {
+        this.routeNumber = routeNumber;
     }
 }

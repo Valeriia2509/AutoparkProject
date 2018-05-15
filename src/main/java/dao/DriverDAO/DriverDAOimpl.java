@@ -1,6 +1,6 @@
-package dao.RouteDAO;
+package dao.DriverDAO;
 
-import model.Route;
+import model.Driver;
 import dao.AbstractDAO;
 import org.apache.log4j.Logger;
 
@@ -11,26 +11,27 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class RouteDAOimpl extends AbstractDAO implements RouteDAO {
+public class DriverDAOimpl extends AbstractDAO implements DriverDAO {
 
-    private static Logger log= Logger.getLogger(RouteDAOimpl.class);
+    private static Logger log=Logger.getLogger(DriverDAOimpl.class);
 
     @Override
-    public void addRoute(Route route) {
+    public void addDriver(Driver driver) {
         Connection connection=getConnectionPool().getConnectionFromPool();
-        String sql="INSERT INTO Routes(number, startRoute, endRoute, distance, bus, driverID) VALUES(?,?,?,?,?,?)";
+        String sql="INSERT INTO Drivers(driverID, name, surname, phoneNumber, salary, routeNumber, busNumber) VALUES(?,?,?,?,?,?,?)";
         PreparedStatement ps=null;
         try {
             ps = connection.prepareStatement(sql);
-            ps.setInt(1,route.getNumber());
-            ps.setString(2,route.getStart());
-            ps.setString(3,route.getEnd());
-            ps.setInt(4,route.getDistance());
-            ps.setString(5,route.getBus());
-            ps.setInt(6,route.getDriverID());
+            ps.setInt(1,driver.getDriverID());
+            ps.setString(2,driver.getName());
+            ps.setString(3,driver.getSurname());
+            ps.setString(4,driver.getPhoneNumber());
+            ps.setInt(5,driver.getSalary());
+            ps.setInt(6,driver.getRouteNumber());
+            ps.setString(7,driver.getBusNumber());
             ps.executeUpdate();
             connection.commit();
-            log.info("Route added");
+            log.info("Driver added");
         } catch (SQLException e) {
             log.error(e);
         } finally {
@@ -46,26 +47,27 @@ public class RouteDAOimpl extends AbstractDAO implements RouteDAO {
     }
 
     @Override
-    public List<Route> getRoutes() {
-        List<Route> routes = new ArrayList<>();
+    public List<Driver> getDrivers() {
+        List<Driver> drivers = new ArrayList<>();
         Connection connection=getConnectionPool().getConnectionFromPool();
         PreparedStatement ps=null;
-        String sql="SELECT * FROM Routes";
+        String sql="SELECT * FROM Drivers";
         ResultSet rs=null;
         try {
             ps = connection.prepareStatement(sql);
             rs=ps.executeQuery();
             while(rs.next()){
-                Route route = new Route();
-                route.setNumber(rs.getInt(1));
-                route.setStart(rs.getString(2));
-                route.setEnd(rs.getString(3));
-                route.setDistance(rs.getInt(4));
-                route.setBus(rs.getString(5));
-                route.setDriverID(rs.getInt(6));
-                routes.add(route);
+                Driver driver = new Driver();
+                driver.setDriverID(rs.getInt(1));
+                driver.setName(rs.getString(2));
+                driver.setSurname(rs.getString(3));
+                driver.setPhoneNumber(rs.getString(4));
+                driver.setSalary(rs.getInt(5));
+                driver.setRouteNumber(rs.getInt(6));
+                driver.setBusNumber(rs.getString(7));
+                drivers.add(driver);
             }
-            log.info("Got array of Routes");
+            log.info("Got array of Drivers");
         } catch (SQLException e) {
             log.error(e);
         } finally {
@@ -77,20 +79,20 @@ public class RouteDAOimpl extends AbstractDAO implements RouteDAO {
             }
             connectionPool.returnConnectionToPool(connection);
         }
-        return  routes;
+        return  drivers;
     }
 
     @Override
-    public void deleteRoute(int number) {
+    public void deleteDriver(int driverID) {
         Connection connection=getConnectionPool().getConnectionFromPool();
-        String sql="DELETE FROM Routes WHERE number=?";
+        String sql="DELETE FROM Drivers WHERE driverID=?";
         PreparedStatement ps=null;
         try {
             ps = connection.prepareStatement(sql);
-            ps.setInt(1,number);
+            ps.setInt(1,driverID);
             ps.executeUpdate();
             connection.commit();
-            log.info("Route deleted");
+            log.info("Driver deleted");
         } catch (SQLException e) {
             log.error(e);
         } finally {
@@ -104,41 +106,41 @@ public class RouteDAOimpl extends AbstractDAO implements RouteDAO {
     }
 
     @Override
-    public void setBus(String bus, int number) {
+    public void setRoute(int routeNumber, int driverID){
         Connection connection=getConnectionPool().getConnectionFromPool();
-        String sql="UPDATE Routes SET bus=? WHERE number=?";
+        String sql="UPDATE Drivers SET routeNumber=? WHERE driverID=?";
+        PreparedStatement ps = null;
+        try {
+            ps = connection.prepareStatement(sql);
+            ps.setInt(1, routeNumber);
+            ps.setInt(2, driverID);
+            ps.executeUpdate();
+            connection.commit();
+            log.info("Route set to Driver");
+        } catch (SQLException e) {
+            log.error(e);
+        } finally {
+            try {
+                ps.close();
+            } catch (SQLException e) {
+                log.error(e);
+            }
+            connectionPool.returnConnectionToPool(connection);
+        }
+    }
+
+    @Override
+    public void setBus(String bus, int driverID) {
+        Connection connection=getConnectionPool().getConnectionFromPool();
+        String sql="UPDATE Drivers SET bus=? WHERE driverID=?";
         PreparedStatement ps = null;
         try {
             ps = connection.prepareStatement(sql);
             ps.setString(1, bus);
-            ps.setInt(2, number);
+            ps.setInt(2, driverID);
             ps.executeUpdate();
             connection.commit();
-            log.info("Bus set to Route");
-        } catch (SQLException e) {
-            log.error(e);
-        } finally {
-            try {
-                ps.close();
-            } catch (SQLException e) {
-                log.error(e);
-            }
-            connectionPool.returnConnectionToPool(connection);
-        }
-    }
-
-    @Override
-    public void setDriver(int driverID, int number) {
-        Connection connection=getConnectionPool().getConnectionFromPool();
-        String sql="UPDATE Routes SET driverID=? WHERE number=?";
-        PreparedStatement ps = null;
-        try {
-            ps = connection.prepareStatement(sql);
-            ps.setInt(1, driverID);
-            ps.setInt(2, number);
-            ps.executeUpdate();
-            connection.commit();
-            log.info("Driver set to Route");
+            log.info("Bus given to Driver");
         } catch (SQLException e) {
             log.error(e);
         } finally {

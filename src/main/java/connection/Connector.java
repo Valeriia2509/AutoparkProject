@@ -1,4 +1,4 @@
-package Connection;
+package connection;
 
 import org.apache.log4j.Logger;
 

@@ -1,4 +1,4 @@
-package Connection;
+package connection;
 
 import org.apache.log4j.Logger;
 
@@ -26,7 +26,7 @@ public class ConnectionPool {
         if (connectionsAvailable.size() != 0) {
             newConnection = connectionsAvailable.pop();
             connectionsUsed.push(newConnection);
-            log.info("Connection got from pool");
+            log.info("connection got from pool");
         } else {
             newConnection = Connector.getConnection();
             connectionsUsed.push(newConnection);
@@ -39,7 +39,7 @@ public class ConnectionPool {
         if (connection!=null){
             connectionsAvailable.push(connection);
             connectionsUsed.pop();
-            log.info("Connection returned to pool");
+            log.info("connection returned to pool");
         }
     }
 }

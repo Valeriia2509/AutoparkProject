@@ -1,6 +1,6 @@
 package dao.BusDAO;
 
-import Model.Bus;
+import model.Bus;
 import dao.AbstractDAO;
 import org.apache.log4j.Logger;
 
@@ -23,8 +23,8 @@ public class BusDAOimpl extends AbstractDAO implements BusDAO {
         try {
             ps = connection.prepareStatement(sql);
             ps.setString(1,bus.getVehiclePlate());
-            ps.setInt(2,bus.getRoute().getNumber());
-            ps.setInt(3,bus.getDriver().getDriverID());
+            ps.setInt(2,bus.getRouteNumber());
+            ps.setInt(3,bus.getDriverID());
             ps.executeUpdate();
             connection.commit();
             log.info("Bus added");
@@ -43,39 +43,8 @@ public class BusDAOimpl extends AbstractDAO implements BusDAO {
     }
 
     @Override
-    public Bus getBus(String vehiclePlate) {
-        Connection connection=getConnectionPool().getConnectionFromPool();
-        PreparedStatement ps=null;
-        String sql="SELECT * FROM Buses WHERE vehiclePlate=?";
-        ResultSet rs=null;
-        Bus bus=null;
-        try {
-            ps = connection.prepareStatement(sql);
-            ps.setString(1,vehiclePlate);
-            rs=ps.executeQuery();
-            while(rs.next()){
-                bus = new Bus();
-                bus.setVehiclePlate(vehiclePlate);
-            }
-            log.info("Got array of Buses");
-        } catch (SQLException e) {
-            log.error(e);
-        }finally {
-            try {
-                rs.close();
-                ps.close();
-            } catch (SQLException e) {
-                log.error(e);
-            }
-            connectionPool.returnConnectionToPool(connection);
-        }
-        return  folders;
-
-    }
-
-    @Override
     public List<Bus> getBuses() {
-        List<Bus> folders = new ArrayList<>();
+        List<Bus> buses = new ArrayList<>();
         Connection connection=getConnectionPool().getConnectionFromPool();
         PreparedStatement ps=null;
         String sql="SELECT * FROM Buses";
@@ -86,8 +55,9 @@ public class BusDAOimpl extends AbstractDAO implements BusDAO {
             while(rs.next()){
                 Bus bus = new Bus();
                 bus.setVehiclePlate(rs.getString(1));
-                bus.setName(rs.getString(2));
-                folders.add(folder);
+                bus.setRouteNumber(rs.getInt(2));
+                bus.setDriverID(rs.getInt(3));
+                buses.add(bus);
             }
             log.info("Got array of Buses");
         } catch (SQLException e) {
@@ -101,7 +71,7 @@ public class BusDAOimpl extends AbstractDAO implements BusDAO {
             }
             connectionPool.returnConnectionToPool(connection);
         }
-        return  folders;
+        return  buses;
     }
 
     @Override
@@ -128,35 +98,50 @@ public class BusDAOimpl extends AbstractDAO implements BusDAO {
     }
 
     @Override
-    public void setRoute(String vehicleint routeNumber) {
+    public void setRoute(int routeNumber, String vehiclePlate) {
         Connection connection=getConnectionPool().getConnectionFromPool();
-        String sql="UPDATE Buses SET routeNumber=? WHERE idbook=?";
+        String sql="UPDATE Buses SET routeNumber=? WHERE vehiclePlate=?";
         PreparedStatement ps = null;
         try {
-            ps = connection.prepareStatement(UPDATE_BOOK);
-            ps.setString(1, book.getName());
-            ptmt.setString(2, book.getAuthor());
-            ptmt.setInt(3, book.getQuantity());
-            ptmt.setInt(4, pk);
-            ptmt.executeUpdate();
+            ps = connection.prepareStatement(sql);
+            ps.setInt(1, routeNumber);
+            ps.setString(2, vehiclePlate);
+            ps.executeUpdate();
+            connection.commit();
+            log.info("Route set to Bus");
         } catch (SQLException e) {
-            log.warn("SQLException at book update()", e);
+            log.error(e);
         } finally {
             try {
-                if (ptmt != null)
-                    ptmt.close();
-                if (connection != null)
-                    cp.closeConnection(connection);
+                ps.close();
             } catch (SQLException e) {
-                log.warn("SQLException at book update()", e);
-            } catch (Exception e) {
-                log.warn("Exception at book update()", e);
-
+                log.error(e);
             }
+            connectionPool.returnConnectionToPool(connection);
         }
     }
 
     @Override
-    public void setDriver(int driverID) {
+    public void setDriver(int driverID, String vehiclePlate) {
+        Connection connection=getConnectionPool().getConnectionFromPool();
+        String sql="UPDATE Buses SET driverID=? WHERE vehiclePlate=?";
+        PreparedStatement ps = null;
+        try {
+            ps = connection.prepareStatement(sql);
+            ps.setInt(1, driverID);
+            ps.setString(2, vehiclePlate);
+            ps.executeUpdate();
+            connection.commit();
+            log.info("Driver set to Bus");
+        } catch (SQLException e) {
+            log.error(e);
+        } finally {
+            try {
+                ps.close();
+            } catch (SQLException e) {
+                log.error(e);
+            }
+            connectionPool.returnConnectionToPool(connection);
+        }
     }
 }
