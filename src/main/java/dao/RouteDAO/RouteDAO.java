@@ -6,9 +6,9 @@ import java.util.List;
 
 public interface RouteDAO {
 
-    public void addRoute(Route route);
-    public List<Route> getRoutes();
-    public void deleteRoute(int number);
-    public void setBus(String bus, int number);
-    public void setDriver(int driverID, int number);
+    void addRoute(Route route);
+    List<Route> getAllRoutes();
+    void deleteRoute(int number);
+    void setBus(String bus, int number);
+    void setDriver(int driverID, int number);
 }

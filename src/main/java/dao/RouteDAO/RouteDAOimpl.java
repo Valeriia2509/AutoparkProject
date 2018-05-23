@@ -1,7 +1,7 @@
 package dao.RouteDAO;
 
-import model.Route;
 import dao.AbstractDAO;
+import model.Route;
 import org.apache.log4j.Logger;
 
 import java.sql.Connection;
@@ -12,16 +12,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class RouteDAOimpl extends AbstractDAO implements RouteDAO {
-
+    private static final String SQL_ADD_ROUTE="INSERT INTO Routes(number, startRoute, endRoute, distance, bus, driverID) VALUES(?,?,?,?,?,?)";
+    private static final String SQL_GET_ALL_ROUTES="SELECT * FROM Routes";
+    private static final String SQL_DELETE_ROUTE="DELETE FROM Routes WHERE number=?";
+    private static final String SQL_SET_BUS="UPDATE Routes SET bus=? WHERE number=?";
+    private static final String SQL_SET_DRIVER="UPDATE Routes SET driverID=? WHERE number=?";
     private static Logger log= Logger.getLogger(RouteDAOimpl.class);
 
     @Override
     public void addRoute(Route route) {
         Connection connection=getConnectionPool().getConnectionFromPool();
-        String sql="INSERT INTO Routes(number, startRoute, endRoute, distance, bus, driverID) VALUES(?,?,?,?,?,?)";
         PreparedStatement ps=null;
         try {
-            ps = connection.prepareStatement(sql);
+            ps = connection.prepareStatement(SQL_ADD_ROUTE);
             ps.setInt(1,route.getNumber());
             ps.setString(2,route.getStart());
             ps.setString(3,route.getEnd());
@@ -29,7 +32,6 @@ public class RouteDAOimpl extends AbstractDAO implements RouteDAO {
             ps.setString(5,route.getBus());
             ps.setInt(6,route.getDriverID());
             ps.executeUpdate();
-            connection.commit();
             log.info("Route added");
         } catch (SQLException e) {
             log.error(e);
@@ -46,14 +48,13 @@ public class RouteDAOimpl extends AbstractDAO implements RouteDAO {
     }
 
     @Override
-    public List<Route> getRoutes() {
+    public List<Route> getAllRoutes() {
         List<Route> routes = new ArrayList<>();
         Connection connection=getConnectionPool().getConnectionFromPool();
         PreparedStatement ps=null;
-        String sql="SELECT * FROM Routes";
         ResultSet rs=null;
         try {
-            ps = connection.prepareStatement(sql);
+            ps = connection.prepareStatement(SQL_GET_ALL_ROUTES);
             rs=ps.executeQuery();
             while(rs.next()){
                 Route route = new Route();
@@ -69,11 +70,12 @@ public class RouteDAOimpl extends AbstractDAO implements RouteDAO {
         } catch (SQLException e) {
             log.error(e);
         } finally {
-            try {
-                rs.close();
-                ps.close();
-            } catch (SQLException e) {
-                log.error(e);
+            if (ps!=null) {
+                try {
+                    ps.close();
+                } catch (SQLException e) {
+                    log.error(e);
+                }
             }
             connectionPool.returnConnectionToPool(connection);
         }
@@ -83,21 +85,21 @@ public class RouteDAOimpl extends AbstractDAO implements RouteDAO {
     @Override
     public void deleteRoute(int number) {
         Connection connection=getConnectionPool().getConnectionFromPool();
-        String sql="DELETE FROM Routes WHERE number=?";
         PreparedStatement ps=null;
         try {
-            ps = connection.prepareStatement(sql);
+            ps = connection.prepareStatement(SQL_DELETE_ROUTE);
             ps.setInt(1,number);
             ps.executeUpdate();
-            connection.commit();
             log.info("Route deleted");
         } catch (SQLException e) {
             log.error(e);
         } finally {
-            try {
-                ps.close();
-            } catch (SQLException e) {
-                log.error(e);
+            if (ps!=null) {
+                try {
+                    ps.close();
+                } catch (SQLException e) {
+                    log.error(e);
+                }
             }
             connectionPool.returnConnectionToPool(connection);
         }
@@ -106,22 +108,22 @@ public class RouteDAOimpl extends AbstractDAO implements RouteDAO {
     @Override
     public void setBus(String bus, int number) {
         Connection connection=getConnectionPool().getConnectionFromPool();
-        String sql="UPDATE Routes SET bus=? WHERE number=?";
         PreparedStatement ps = null;
         try {
-            ps = connection.prepareStatement(sql);
+            ps = connection.prepareStatement(SQL_SET_BUS);
             ps.setString(1, bus);
             ps.setInt(2, number);
             ps.executeUpdate();
-            connection.commit();
             log.info("Bus set to Route");
         } catch (SQLException e) {
             log.error(e);
         } finally {
-            try {
-                ps.close();
-            } catch (SQLException e) {
-                log.error(e);
+            if (ps!=null) {
+                try {
+                    ps.close();
+                } catch (SQLException e) {
+                    log.error(e);
+                }
             }
             connectionPool.returnConnectionToPool(connection);
         }
@@ -130,22 +132,22 @@ public class RouteDAOimpl extends AbstractDAO implements RouteDAO {
     @Override
     public void setDriver(int driverID, int number) {
         Connection connection=getConnectionPool().getConnectionFromPool();
-        String sql="UPDATE Routes SET driverID=? WHERE number=?";
         PreparedStatement ps = null;
         try {
-            ps = connection.prepareStatement(sql);
+            ps = connection.prepareStatement(SQL_SET_DRIVER);
             ps.setInt(1, driverID);
             ps.setInt(2, number);
             ps.executeUpdate();
-            connection.commit();
             log.info("Driver set to Route");
         } catch (SQLException e) {
             log.error(e);
         } finally {
-            try {
-                ps.close();
-            } catch (SQLException e) {
-                log.error(e);
+            if (ps!=null) {
+                try {
+                    ps.close();
+                } catch (SQLException e) {
+                    log.error(e);
+                }
             }
             connectionPool.returnConnectionToPool(connection);
         }

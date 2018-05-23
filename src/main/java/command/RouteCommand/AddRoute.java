@@ -2,6 +2,7 @@ package command.RouteCommand;
 
 import command.ICommand;
 import dao.RouteDAO.RouteDAOimpl;
+import manager.PagesManager;
 import model.Route;
 
 import javax.servlet.http.HttpServletRequest;
@@ -15,7 +16,7 @@ public class AddRoute implements ICommand {
     private static final String DRIVER_ID="diverID";
 
     @Override
-    public void execute(HttpServletRequest request) {
+    public String execute(HttpServletRequest request) {
         RouteDAOimpl routeDAO = new RouteDAOimpl();
         Route route = new Route(Integer.parseInt(request.getParameter(NUMBER)),
                 (String) request.getParameter(START_ROUTE),
@@ -26,5 +27,9 @@ public class AddRoute implements ICommand {
         routeDAO.addRoute(route);
 
         log.info("New Route(" + route.getNumber() + ") was added");
+
+        String page = PagesManager.getInstance().getProperty(
+                PagesManager.TEST_PAGE);
+        return page;
     }
 }

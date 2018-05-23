@@ -2,19 +2,23 @@ package command.DriverCommand;
 
 import command.ICommand;
 import dao.DriverDAO.DriverDAOimpl;
+import manager.PagesManager;
 
 import javax.servlet.http.HttpServletRequest;
 
 public class DeleteDriver implements ICommand {
-    private static final String DRIVER_ID = "driverID";
 
     @Override
-    public void execute(HttpServletRequest request) {
+    public String execute(HttpServletRequest request) {
 
         DriverDAOimpl driverDAO = new DriverDAOimpl();
-        int driverID = Integer.parseInt(request.getParameter(DRIVER_ID));
+        int driverID = Integer.parseInt(request.getParameter("driverID"));
         driverDAO.deleteDriver(driverID);
 
         log.info("Driver(" + driverID + ") deleted");
+
+        String page = PagesManager.getInstance().getProperty(
+                PagesManager.TEST_PAGE);
+        return page;
     }
 }

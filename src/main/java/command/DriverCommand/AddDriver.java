@@ -2,31 +2,29 @@ package command.DriverCommand;
 
 import command.ICommand;
 import dao.DriverDAO.DriverDAOimpl;
+import manager.PagesManager;
 import model.Driver;
 
 import javax.servlet.http.HttpServletRequest;
 
 public class AddDriver implements ICommand{
-    private static final String DRIVER_ID = "driverID";
-    private static final String NAME="name";
-    private static final String SURNAME="surname";
-    private static final String PHONE_NUMBER="phoneNumber";
-    private static final String SALARY="Salary";
-    private static final String ROUTE_NUMBER="routeNumber";
-    private static final String BUS_NUMBER="busNumber";
 
     @Override
-    public void execute(HttpServletRequest request) {
+    public String execute(HttpServletRequest request) {
         DriverDAOimpl driverDAO = new DriverDAOimpl();
-        Driver driver = new Driver(Integer.parseInt(request.getParameter(DRIVER_ID)),
-                (String) request.getParameter(NAME),
-                (String) request.getParameter(SURNAME),
-                (String) request.getParameter(PHONE_NUMBER),
-                Integer.parseInt(request.getParameter(SALARY)),
-                Integer.parseInt(request.getParameter(ROUTE_NUMBER)),
-                (String) request.getParameter(BUS_NUMBER));
+        Driver driver = new Driver(Integer.parseInt(request.getParameter("driverID")),
+                (String) request.getParameter("name"),
+                (String) request.getParameter("surname"),
+                (String) request.getParameter("phoneNumber"),
+                Integer.parseInt(request.getParameter("Salary")),
+                Integer.parseInt(request.getParameter("routeNumber")),
+                (String) request.getParameter("busNumber"));
         driverDAO.addDriver(driver);
 
         log.info("New Driver(" + driver.getDriverID() + ") was added");
+
+        String page = PagesManager.getInstance().getProperty(
+                PagesManager.TEST_PAGE);
+        return page;
     }
 }

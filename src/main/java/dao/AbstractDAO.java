@@ -3,11 +3,11 @@ package dao;
 import connection.ConnectionPool;
 
 public class AbstractDAO {
-    protected ConnectionPool connectionPool = null;
+    protected ConnectionPool connectionPool;
 
     public AbstractDAO() {
         super();
-        connectionPool=new ConnectionPool();
+        connectionPool=ConnectionPool.getInstance();
     }
 
     public ConnectionPool getConnectionPool() {

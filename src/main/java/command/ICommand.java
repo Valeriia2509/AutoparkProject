@@ -5,6 +5,6 @@ import javax.servlet.http.HttpServletRequest;
 
 public interface ICommand {
 
-    static Logger log = Logger.getLogger(ICommand.class);
-    public void execute(HttpServletRequest request);
+    Logger log = Logger.getLogger(ICommand.class);
+    String execute(HttpServletRequest request);
 }

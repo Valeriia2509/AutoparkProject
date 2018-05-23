@@ -1,7 +1,7 @@
 package dao.DriverDAO;
 
-import model.Driver;
 import dao.AbstractDAO;
+import model.Driver;
 import org.apache.log4j.Logger;
 
 import java.sql.Connection;
@@ -12,16 +12,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class DriverDAOimpl extends AbstractDAO implements DriverDAO {
-
+    private static final String SQL_ADD_DRIVER="INSERT INTO Drivers(driverID, name, surname, phoneNumber, salary, routeNumber, busNumber) VALUES(?,?,?,?,?,?,?)";
+    private static final String SQL_GET_ALL_DRIVERS="SELECT * FROM Drivers";
+    private static final String SQL_DELETE_DRIVER="DELETE FROM Drivers WHERE driverID=?";
+    private static final String SQL_SET_DRIVER="UPDATE Drivers SET routeNumber=? WHERE driverID=?";
+    private static final String SQL_SET_BUS="UPDATE Drivers SET bus=? WHERE driverID=?";
     private static Logger log=Logger.getLogger(DriverDAOimpl.class);
 
     @Override
     public void addDriver(Driver driver) {
         Connection connection=getConnectionPool().getConnectionFromPool();
-        String sql="INSERT INTO Drivers(driverID, name, surname, phoneNumber, salary, routeNumber, busNumber) VALUES(?,?,?,?,?,?,?)";
         PreparedStatement ps=null;
         try {
-            ps = connection.prepareStatement(sql);
+            ps = connection.prepareStatement(SQL_ADD_DRIVER);
             ps.setInt(1,driver.getDriverID());
             ps.setString(2,driver.getName());
             ps.setString(3,driver.getSurname());
@@ -30,7 +33,6 @@ public class DriverDAOimpl extends AbstractDAO implements DriverDAO {
             ps.setInt(6,driver.getRouteNumber());
             ps.setString(7,driver.getBusNumber());
             ps.executeUpdate();
-            connection.commit();
             log.info("Driver added");
         } catch (SQLException e) {
             log.error(e);
@@ -47,14 +49,13 @@ public class DriverDAOimpl extends AbstractDAO implements DriverDAO {
     }
 
     @Override
-    public List<Driver> getDrivers() {
+    public List<Driver> getAllDrivers() {
         List<Driver> drivers = new ArrayList<>();
         Connection connection=getConnectionPool().getConnectionFromPool();
         PreparedStatement ps=null;
-        String sql="SELECT * FROM Drivers";
         ResultSet rs=null;
         try {
-            ps = connection.prepareStatement(sql);
+            ps = connection.prepareStatement(SQL_GET_ALL_DRIVERS);
             rs=ps.executeQuery();
             while(rs.next()){
                 Driver driver = new Driver();
@@ -71,11 +72,12 @@ public class DriverDAOimpl extends AbstractDAO implements DriverDAO {
         } catch (SQLException e) {
             log.error(e);
         } finally {
-            try {
-                rs.close();
-                ps.close();
-            } catch (SQLException e) {
-                log.error(e);
+            if (ps!=null) {
+                try {
+                    ps.close();
+                } catch (SQLException e) {
+                    log.error(e);
+                }
             }
             connectionPool.returnConnectionToPool(connection);
         }
@@ -85,21 +87,21 @@ public class DriverDAOimpl extends AbstractDAO implements DriverDAO {
     @Override
     public void deleteDriver(int driverID) {
         Connection connection=getConnectionPool().getConnectionFromPool();
-        String sql="DELETE FROM Drivers WHERE driverID=?";
         PreparedStatement ps=null;
         try {
-            ps = connection.prepareStatement(sql);
+            ps = connection.prepareStatement(SQL_DELETE_DRIVER);
             ps.setInt(1,driverID);
             ps.executeUpdate();
-            connection.commit();
             log.info("Driver deleted");
         } catch (SQLException e) {
             log.error(e);
         } finally {
-            try {
-                ps.close();
-            } catch (SQLException e) {
-                log.error(e);
+            if (ps!=null) {
+                try {
+                    ps.close();
+                } catch (SQLException e) {
+                    log.error(e);
+                }
             }
             connectionPool.returnConnectionToPool(connection);
         }
@@ -108,22 +110,22 @@ public class DriverDAOimpl extends AbstractDAO implements DriverDAO {
     @Override
     public void setRoute(int routeNumber, int driverID){
         Connection connection=getConnectionPool().getConnectionFromPool();
-        String sql="UPDATE Drivers SET routeNumber=? WHERE driverID=?";
         PreparedStatement ps = null;
         try {
-            ps = connection.prepareStatement(sql);
+            ps = connection.prepareStatement(SQL_SET_DRIVER);
             ps.setInt(1, routeNumber);
             ps.setInt(2, driverID);
             ps.executeUpdate();
-            connection.commit();
             log.info("Route set to Driver");
         } catch (SQLException e) {
             log.error(e);
         } finally {
-            try {
-                ps.close();
-            } catch (SQLException e) {
-                log.error(e);
+            if (ps!=null) {
+                try {
+                    ps.close();
+                } catch (SQLException e) {
+                    log.error(e);
+                }
             }
             connectionPool.returnConnectionToPool(connection);
         }
@@ -132,22 +134,22 @@ public class DriverDAOimpl extends AbstractDAO implements DriverDAO {
     @Override
     public void setBus(String bus, int driverID) {
         Connection connection=getConnectionPool().getConnectionFromPool();
-        String sql="UPDATE Drivers SET bus=? WHERE driverID=?";
         PreparedStatement ps = null;
         try {
-            ps = connection.prepareStatement(sql);
+            ps = connection.prepareStatement(SQL_SET_BUS);
             ps.setString(1, bus);
             ps.setInt(2, driverID);
             ps.executeUpdate();
-            connection.commit();
             log.info("Bus given to Driver");
         } catch (SQLException e) {
             log.error(e);
         } finally {
-            try {
-                ps.close();
-            } catch (SQLException e) {
-                log.error(e);
+            if (ps!=null) {
+                try {
+                    ps.close();
+                } catch (SQLException e) {
+                    log.error(e);
+                }
             }
             connectionPool.returnConnectionToPool(connection);
         }

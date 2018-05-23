@@ -5,9 +5,9 @@ import model.Bus;
 import java.util.List;
 
 public interface BusDAO {
-    public void addBus(Bus bus);
-    public List<Bus> getBuses();
-    public void deleteBus(String vehiclePlate);
-    public void setRoute(int routeNumber, String vehiclePlate);
-    public void setDriver(int driverID, String vehiclePlate);
+    void addBus(Bus bus);
+    List<Bus> getAllBuses();
+    void deleteBus(String vehiclePlate);
+    void setRoute(int routeNumber, String vehiclePlate);
+    void setDriver(int driverID, String vehiclePlate);
 }

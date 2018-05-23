@@ -13,7 +13,7 @@
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="AuroparkProject" target="1.5" />
-      <module name="AutoparkProject" target="1.7" />
+      <module name="AutoparkProject" target="1.8" />
       <module name="FinalProject" target="1.5" />
     </bytecodeTargetLevel>
   </component>
